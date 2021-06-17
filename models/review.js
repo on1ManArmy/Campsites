@@ -4,7 +4,11 @@ const Schema = mongoose.Schema;
 // One to Bajillions 
 const reviewSchema = new Schema({
     body: String,
-    rating: Number
+    rating: Number,
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
 })
 
 
