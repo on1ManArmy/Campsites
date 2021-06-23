@@ -1,3 +1,9 @@
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
+// console.log(process.env.CLOUDINARY_CLOUD_NAME);
+
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
@@ -6,13 +12,13 @@ const session = require("express-session");
 const flash = require("connect-flash");
 const methodOverride = require("method-override");
 const ExpressError = require("./utils/ExpressError");
-const passport = require('passport');
-const LocalStrategy = require('passport-local');
-const User = require('./models/user');
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user");
 const user = require("./models/user");
 const { format } = require("path");
 
-const userRoutes = require('./routes/users')
+const userRoutes = require("./routes/users");
 const campgroundsRoutes = require("./routes/campgrounds");
 const reviewsRoutes = require("./routes/reviews");
 
@@ -56,28 +62,28 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 app.use(flash());
 
-// ============= for passport 
-app.use(passport.initialize())
-app.use(passport.session())
-passport.use(new LocalStrategy(User.authenticate()))
+// ============= for passport
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
 
-passport.serializeUser(User.serializeUser()); // Storage 
+passport.serializeUser(User.serializeUser()); // Storage
 passport.deserializeUser(User.deserializeUser()); // Unstorage
 
 app.use((req, res, next) => {
-  console.log(req.session)
-  res.locals.currentUser = req.user
+  console.log(req.session);
+  res.locals.currentUser = req.user;
   res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error")
+  res.locals.error = req.flash("error");
   next();
 });
 
 // /register
 // POST / register - a user
-// /login -- login form 
-// POST /login - for user login 
+// /login -- login form
+// POST /login - for user login
 
-app.use('/', userRoutes)
+app.use("/", userRoutes);
 app.use("/campgrounds", campgroundsRoutes);
 app.use("/campgrounds/:id/reviews", reviewsRoutes);
 
