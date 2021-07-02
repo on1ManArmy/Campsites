@@ -9,3 +9,4 @@ Used multer middleware for uploading images
 used cloudinary to store large images -- normal form cannt sent large data likes images, videos on the DB.
 
 
+Resolved the bugs on seeds.js
