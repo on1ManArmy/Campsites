@@ -1,4 +1,3 @@
-
 mapboxgl.accessToken = mapToken;
 
 const map = new mapboxgl.Map({
@@ -8,6 +7,11 @@ const map = new mapboxgl.Map({
   zoom: 8, // starting zoom
 });
 
+map.addControl(new mapboxgl.NavigationControl());
+map.dragRotate.enable();
+
+// disable map rotation using touch rotation gesture
+map.touchZoomRotate.enableRotation();
 const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
   `<h3> ${campground.title} </h3> <p> ${campground.location} <p/>`
 );

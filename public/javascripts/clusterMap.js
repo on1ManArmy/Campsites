@@ -7,6 +7,13 @@ var map = new mapboxgl.Map({
 });
 
 
+map.addControl(new mapboxgl.NavigationControl());
+// disable map rotation using right click + drag
+map.dragRotate.enable();
+ 
+// disable map rotation using touch rotation gesture
+map.touchZoomRotate.enableRotation();
+
 map.on("load", function () {
   // console.log("Load MAP");
   // Add a new source from our GeoJSON data and
