@@ -1,6 +1,6 @@
-if (process.env.NODE_ENV !== "production") {
+// if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
-}
+// }
 
 // console.log(process.env.CLOUDINARY_CLOUD_NAME);
 
@@ -17,6 +17,10 @@ const LocalStrategy = require("passport-local");
 const User = require("./models/user");
 const user = require("./models/user");
 const { format } = require("path");
+const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
+
+
 
 const userRoutes = require("./routes/users");
 const campgroundsRoutes = require("./routes/campgrounds");
@@ -46,13 +50,19 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(mongoSanitize());
+
+
+
 
 const sessionConfig = {
+  name: 'session',
   secret: "thisshouldbeabettersecret!",
   resave: false,
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
+    // secure: true,
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
     maxAge: 1000 * 60 * 60 * 24 * 7,
   },
@@ -61,6 +71,14 @@ const sessionConfig = {
 // ========== for session and flash messages
 app.use(session(sessionConfig));
 app.use(flash());
+app.use(
+  helmet(
+    {
+      contentSecurityPolicy: false,
+    }
+  )
+);
+
 
 // ============= for passport
 app.use(passport.initialize());
@@ -71,7 +89,7 @@ passport.serializeUser(User.serializeUser()); // Storage
 passport.deserializeUser(User.deserializeUser()); // Unstorage
 
 app.use((req, res, next) => {
-  console.log(req.session);
+  console.log(req.query);
   res.locals.currentUser = req.user;
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");

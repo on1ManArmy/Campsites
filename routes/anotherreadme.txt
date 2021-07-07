@@ -10,3 +10,8 @@ used cloudinary to store large images -- normal form cannt sent large data likes
 
 
 Resolved the bugs on seeds.js
+
+Used mongosanitize of Injection attacks
+
+
+Used helmet.js for security purpose
