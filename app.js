@@ -1,6 +1,6 @@
-// if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
-// }
+}
 
 // console.log(process.env.CLOUDINARY_CLOUD_NAME);
 
@@ -20,13 +20,18 @@ const { format } = require("path");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 
-
-
 const userRoutes = require("./routes/users");
 const campgroundsRoutes = require("./routes/campgrounds");
 const reviewsRoutes = require("./routes/reviews");
 
-mongoose.connect("mongodb://localhost:27017/yelp-camp", {
+// mongodb://localhost:27017/yelp-camp
+// const dbUrl = process.env.DB_URL;
+const MongoDBStore = require("connect-mongodb-session")(session);
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/yelp-camp";
+// console.log(dbUrl);
+mongoose.Promise = global.Promise;
+// const dbUrl = "mongodb+srv://viper:Abhi19961@cluster1-n60yg.mongodb.net/Cluster0?retryWrites=true";
+mongoose.connect(dbUrl, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
@@ -52,12 +57,18 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(mongoSanitize());
 
+const secret = process.env.SECRET || "thisshouldbeabettersecret!";
 
-
+const store = new MongoDBStore({
+  url: dbUrl,
+  secret,
+  touchAfter: 24 * 60 * 60,
+});
 
 const sessionConfig = {
-  name: 'session',
-  secret: "thisshouldbeabettersecret!",
+  store,
+  name: "session",
+  secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -72,13 +83,10 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 app.use(flash());
 app.use(
-  helmet(
-    {
-      contentSecurityPolicy: false,
-    }
-  )
+  helmet({
+    contentSecurityPolicy: false,
+  })
 );
-
 
 // ============= for passport
 app.use(passport.initialize());
@@ -125,3 +133,5 @@ app.listen(3000, () => {
 });
 
 // POST campground/:id/reviews
+
+// WM0NQ8CmmwVu4SPW == MONGO DB PASSWORD
